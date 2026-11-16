@@ -1,0 +1,61 @@
+* { box-sizing: border-box; }
+:root { --bg:#07140d; --panel:#10261b; --panel2:#0c1e15; --edge:#2f5a43; --edge-d:#050f09; --ink:#dcf5e6; --mute:#93bba3; --leaf:#5cc46a; --gold:#f2c14e; }
+html,body { margin:0; min-height:100%; }
+body { background:var(--bg); color:var(--ink); font-family:"Pixelify Sans",system-ui,sans-serif; line-height:1.5; }
+.collection-bg { position:fixed; inset:0; z-index:0; pointer-events:none; background:radial-gradient(ellipse at 50% 0%,rgba(92,196,106,.18),transparent 60%),linear-gradient(rgba(5,18,11,.9),rgba(5,18,11,.96)),url("assets/map.png") 0 0/260px; }
+.collection-main { position:relative; z-index:1; width:min(1080px,calc(100% - 28px)); margin:0 auto; padding:20px 0 48px; }
+.collection-nav { display:flex; flex-wrap:wrap; gap:16px; margin-bottom:18px; }
+
+.home {
+   display:inline-block;
+   color:var(--ink);
+   font-weight:700;
+   text-decoration:none;
+   background:var(--panel);
+   border:2px solid var(--edge);
+   padding:6px 10px
+}
+
+.home:hover,.home:focus-visible {
+   background:var(--panel);
+   outline:3px solid var(--edge)
+}
+
+a { color:#9ee7ad; text-decoration:none; } a:hover { text-decoration:underline; }
+.collection-header { text-align:center; margin:12px 0 24px; }
+.header-plants { font-size:2rem; letter-spacing:8px; }
+.collection-header h1 { color:var(--ink); font-size:clamp(2.2rem,6vw,3.3rem); line-height:1.1; margin:4px 0; text-shadow:3px 3px 0 #245d37; }
+.collection-header p { color:var(--mute); margin:9px 0; }
+.collection-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:16px 0; }
+.collection-stat { display:grid; gap:4px; justify-items:center; text-align:center; padding:16px 8px; background:var(--panel); border:3px solid var(--edge); box-shadow:4px 4px 0 var(--edge-d); color:var(--mute); }
+.collection-stat strong { color:var(--leaf); font-size:2rem; line-height:1.1; }
+.goal-panel,.collection-section { background:var(--panel); border:3px solid var(--edge); box-shadow:5px 5px 0 var(--edge-d); padding:clamp(14px,3vw,22px); margin:18px 0; }
+.goal-heading,.section-heading { display:flex; align-items:center; justify-content:space-between; gap:14px; }
+h2 { font-size:1.35rem; margin:0 0 3px; }
+.goal-heading p,.section-heading p { color:var(--mute); margin:3px 0 12px; }
+#goalStatus { color:var(--gold); white-space:nowrap; font-size:1.15rem; }
+.goal-track { height:17px; border:2px solid var(--edge); background:var(--panel2); overflow:hidden; }
+.goal-track span { display:block; width:0; height:100%; background:var(--leaf); transition:width .25s ease; }
+.goal-message { color:var(--mute); margin:8px 0 0; font-size:.9rem; }
+.plant-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin-top:12px; }
+.plant-card { min-height:170px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; padding:14px 8px; text-align:center; background:var(--panel2); border:2px solid var(--edge); }
+.plant-card.unlocked { border-color:#4b9c5b; }
+.plant-card.locked { opacity:.58; filter:grayscale(1); }
+.plant-art { font-size:2.8rem; line-height:1.2; min-height:56px; }
+.plant-name { font-weight:700; color:var(--ink); }
+.plant-detail { color:var(--mute); font-size:.82rem; }
+.plant-status { color:#9ee7ad; font-size:.78rem; }
+.locked .plant-status { color:var(--gold); }
+.legend { display:flex; align-items:center; gap:6px; color:var(--mute); font-size:.78rem; white-space:nowrap; }
+.legend-dot { width:9px; height:9px; display:inline-block; border-radius:50%; }
+.unlocked-dot { background:var(--leaf); } .locked-dot { background:#657269; margin-left:7px; }
+.daily-rewards { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:12px; }
+.daily-reward { display:flex; align-items:center; gap:12px; padding:12px; background:var(--panel2); border:2px solid var(--edge); }
+.daily-reward .plant-art { font-size:2rem; min-width:42px; text-align:center; }
+.daily-reward strong { display:block; }
+.daily-reward small { color:var(--mute); }
+.daily-reward.locked { opacity:.55; filter:grayscale(1); }
+.empty-rewards { grid-column:1/-1; text-align:center; color:var(--mute); padding:20px; border:2px dashed var(--edge); }
+.collection-note { color:var(--mute); text-align:center; font-size:.82rem; margin-top:20px; }
+@media(max-width:760px) { .plant-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } .daily-rewards { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media(max-width:480px) { .collection-stats { grid-template-columns:1fr; } .plant-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .daily-rewards { grid-template-columns:1fr; } .goal-heading,.section-heading { align-items:flex-start; flex-direction:column; } }

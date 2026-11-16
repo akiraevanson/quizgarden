@@ -1,28 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Focus Mode | QuizGarden</title>
-    
-    <link rel="icon" type="image/png" href="assets/planticon.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Focus Mode | QuizGarden</title>
+
+  <link rel="icon" type="image/png" href="assets/planticon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="timer.css">
+  <link rel="stylesheet" href="focus.css">
 </head>
 
 <body>
-    <main>
-        <a class="home" href="index.html">← Back to the garden</a>
-        <section class="panel">
-            <h1>Focus Mode</h1>
-            <p>Start a session and watch a plant grow while you stay put.</p>
-            <p><b>Coming soon. This is what it will do:</b></p>
-            <ul>
-                <li>The plant grows over the length of your session</li>
-                <li>It stops growing if you leave the page</li>
-                <li>Fully grown plants go to your collection</li>
-            </ul>
+  <div class="bg" id="bg" aria-hidden="true"></div>
+
+  <main id="fmain">
+    <a class="home" href="index.html">← Back to the garden</a>
+    <h1>Focus Mode</h1>
+    <p class="lede hide-calm">Pick one small thing, start a session, and watch your plant grow while you stay with it. If you step away, the plant waits for you.</p>
+
+    <section class="card goalcard hide-calm" aria-labelledby="goalL">
+      <label id="goalL" for="goal"><b>What would you like to accomplish?</b></label>
+      <input id="goal" type="text" maxlength="80" placeholder="Example: finish Chapter 4 notes" autocomplete="off">
+      <p class="sub">One step at a time. You've got this.</p>
+    </section>
+
+    <div class="grid fgrid">
+      <section class="card sessioncard" aria-label="Focus session">
+        <p class="goalline" id="goalline" hidden>Working on: <b id="goaltext"></b></p>
+
+        <div class="scene" id="scene" data-env="garden">
+          <div class="glow" id="glow"></div>
+          <div class="ground"></div>
+          <img class="plant" id="plant" alt="">
+        </div>
+
+        <div class="plantinfo">
+          <div class="time ftime" id="ftime" role="timer" aria-live="off">25:00</div>
+          <div class="stagerow"><span id="stage">Seed</span><span class="pct" id="pct">0%</span></div>
+          <div class="pbar" aria-hidden="true"><i id="pfill"></i></div>
+          <p id="msg" role="status" aria-live="polite">Press Start to plant your seed.</p>
+        </div>
+
+        <div class="lenrow" id="lenrow">
+          <div class="stepper">
+            <button type="button" id="minus" aria-label="One minute less">−</button>
+            <output id="minsOut">25 min</output>
+            <button type="button" id="plus" aria-label="One minute more">+</button>
+          </div>
+          <div class="choices chips" id="chips" role="group" aria-label="Quick session lengths"></div>
+        </div>
+
+        <div class="controls">
+          <button type="button" class="primary" id="start">Start session</button>
+          <button type="button" id="end" disabled>End early</button>
+        </div>
+
+        <div class="sessionfoot">
+          <p class="stat">Plants grown: <b id="count">0</b></p>
+          <button type="button" class="quiet" id="calmBtn" aria-pressed="false">Distraction-free view</button>
+        </div>
+      </section>
+
+      <div class="side hide-calm">
+        <section class="card taskcard" aria-labelledby="taskH">
+          <h2 id="taskH">Small steps</h2>
+          <p class="sub">Break it into pieces you can finish.</p>
+          <form class="taskform saverow" id="taskform">
+            <input id="taskin" type="text" maxlength="80" placeholder="Add a step" aria-label="New step" autocomplete="off">
+            <button type="submit" class="primary">Add</button>
+          </form>
+          <ul class="tasks" id="tasks"></ul>
+          <div class="taskfoot">
+            <span id="taskcount"></span>
+            <button type="button" class="quiet" id="clearDone" hidden>Clear finished</button>
+          </div>
+          <p id="taskmsg" role="status" aria-live="polite"></p>
         </section>
-    </main>
+
+        <section class="card spacecard" aria-labelledby="spaceH">
+          <h2 id="spaceH">Your space</h2>
+
+          <div class="grp" role="group" aria-labelledby="envL">
+            <span class="glabel" id="envL">Scene</span>
+            <div class="choices" id="envs">
+              <button type="button" data-env="garden" aria-pressed="true">Garden</button>
+              <button type="button" data-env="night" aria-pressed="false">Night</button>
+              <button type="button" data-env="rain" aria-pressed="false">Rain</button>
+              <button type="button" data-env="minimal" aria-pressed="false">Minimal</button>
+            </div>
+          </div>
+
+          <div class="grp" role="group" aria-labelledby="sndL">
+            <span class="glabel" id="sndL">Ambient sound</span>
+            <div class="choices" id="sounds">
+              <button type="button" data-sound="off" aria-pressed="true">Off</button>
+              <button type="button" data-sound="rain" aria-pressed="false">Rain</button>
+              <button type="button" data-sound="wind" aria-pressed="false">Wind</button>
+              <button type="button" data-sound="hum" aria-pressed="false">Soft hum</button>
+            </div>
+          </div>
+
+          <div class="grp">
+            <label class="glabel" for="vol">Sound level</label>
+            <input id="vol" type="range" min="0" max="100" step="5" value="40">
+          </div>
+
+          <div class="opts">
+            <label class="switch"><input type="checkbox" id="awayBox"><span>Pause my plant when I leave this page</span></label>
+            <label class="switch"><input type="checkbox" id="chimeBox"><span>Play a soft chime when the session ends</span></label>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+<script src="focus.js"></script>
 </body>
 </html>

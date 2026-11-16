@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Review | QuizGarden</title>
+  <link rel="icon" type="image/png" href="assets/planticon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="daily-review.css">
+</head>
+<body>
+  <div class="review-bg" aria-hidden="true"></div>
+  <main class="review-main">
+    <nav class="review-nav">
+      <a class="home" href="index.html">← Back to the garden</a>
+      <a class="home" href="game.html">Play Garden Match</a>
+      <a class="home" href="questions.html">Question Bank</a>
+      <a class="home" href="collection.html">My Collection</a>
+    </nav>
+
+    <header class="review-header">
+      <div class="review-sprout" aria-hidden="true">🌱</div>
+      <h1>Daily Study Review</h1>
+      <p>See what you learned, what challenged you, and what to practice next.</p>
+    </header>
+
+    <section class="review-panel review-date-panel">
+      <div>
+        <h2>Your learning snapshot</h2>
+        <p>Choose a day to look back at your completed questions.</p>
+      </div>
+      <label class="date-control" for="reviewDate">Review date
+        <input id="reviewDate" type="date">
+      </label>
+    </section>
+
+    <section class="review-stats" aria-label="Daily statistics">
+      <article class="stat-card"><span class="stat-icon">🌼</span><strong id="totalCount">0</strong><span>Questions completed</span></article>
+      <article class="stat-card"><span class="stat-icon">🌱</span><strong id="firstTryCount">0</strong><span>Correct first try</span></article>
+      <article class="stat-card"><span class="stat-icon">🌿</span><strong id="multipleCount">0</strong><span>Needed more attempts</span></article>
+      <article class="stat-card"><span class="stat-icon">📈</span><strong id="accuracyRate">—</strong><span>First-try accuracy</span></article>
+    </section>
+
+    <section class="review-panel">
+      <div class="section-heading">
+        <div><h2>Today's performance</h2><p>How many questions you answered on your first attempt.</p></div>
+        <strong id="performanceLabel" class="performance-label">No data yet</strong>
+      </div>
+      <div class="progress-track" role="progressbar" aria-label="First try accuracy" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="accuracyProgress">
+        <div id="accuracyBar" class="progress-fill"></div>
+      </div>
+      <div class="progress-legend"><span>First-try correct</span><span id="accuracyCaption">Complete a question to begin tracking.</span></div>
+    </section>
+
+    <section class="review-panel">
+      <div class="section-heading"><div><h2>Topics to review</h2><p>Subjects and sets where you needed extra attempts.</p></div></div>
+      <div id="topicList" class="topic-list"></div>
+    </section>
+
+    <section class="review-panel">
+      <div class="section-heading"><div><h2>Questions worth revisiting</h2><p>These completed questions took more than one attempt.</p></div></div>
+      <div id="difficultList" class="question-review-list"></div>
+    </section>
+
+    <section class="review-panel">
+      <div class="section-heading"><div><h2>Daily history</h2><p>Select a previous day to review your progress.</p></div></div>
+      <div id="historyList" class="history-list"></div>
+    </section>
+
+    <p class="review-note">Your review data is saved in this browser on this device. It is not synced between devices.</p>
+  </main>
+  <script src="daily-review.js"></script>
+</body>
+</html>

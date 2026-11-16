@@ -13,7 +13,12 @@
 
 <body>
     <main>
-        <a class="home" href="index.html">← Back to the garden</a>
+        <nav class="game-links">
+            <a class="home" href="index.html">← Back to the garden</a>
+            <a class="home" href="daily-review.html">Daily Review</a>
+            <a class="home" href="collection.html">My Collection</a>
+            <a class="home" href="questions.html">Question Bank</a>
+        </nav>
         <section class="panel">
             <h1>QuizGarden</h1>
             <label for="notes">Paste your study notes</label>
@@ -23,9 +28,15 @@
                 <button id="gen">Make my questions</button>
                 <button id="demo">Try sample notes</button>
             </div>
+            <div class="save-set-controls">
+                <input id="saveSetTitle" type="text" maxlength="70" placeholder="Name this question set">
+                <input id="saveSetSubject" type="text" maxlength="40" placeholder="Subject / topic (optional)">
+                <button id="saveSet" type="button" hidden>Save to Question Bank</button>
+            </div>
             <p id="status" role="status" aria-live="polite">Paste notes, or try the sample notes to start.</p>
         </section>
         
+        <section class="container5">
         <div class="frame">
             <div class="corner_topleft"></div>
             <div class="corner_topright"></div>
@@ -97,17 +108,29 @@
             </div>
         </div>
         
-        <section class="panel" id="qpanel">
+        
+        <section class="panel2" id="qpanel">
             <div class="hud">
                 <span id="round"></span>
                 <span id="score"></span>
             </div>
             
             <ol id="qs"></ol>
+            
             <button id="next" hidden>Next round</button>
+            
             <p class="help">Walk into a plant to pick it up, then walk into the pot whose question it answers. A wrong pot just sends the plant back.</p>
         </section>
+        </section>
     </main>
-        <script src="game.js"></script>
+
+    <style>
+        .game-links { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:12px; }
+        .save-set-controls { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+        .save-set-controls input { min-width:180px; flex:1 1 180px; padding:9px; font:inherit; }
+        .save-set-controls button { padding:9px 12px; cursor:pointer; font:inherit; }
+    </style>
+    <script src="game.js"></script>
+
 </body>
 </html>

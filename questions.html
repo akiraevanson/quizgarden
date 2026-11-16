@@ -1,30 +1,113 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <title>Make Questions | QuizGarden</title>
-    
-    <link rel="icon" type="image/png" href="assets/planticon.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Question Bank | QuizGarden</title>
+  <link rel="icon" type="image/png" href="assets/planticon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="question-bank.css">
 </head>
 <body>
-    <main>
-        <a class="home" href="index.html">← Back to the garden</a>
-        <section class="panel">
-            <h1>Make Questions</h1>
-            <p>Paste your notes and Claude turns them into quiz questions.</p>
-            <p>
-                <b>Coming soon. This is what it will do:</b>
-            </p>
-            <ul>
-                <li>Review each question before you play: edit it, delete it, or flag it as wrong</li>
-                <li>Choose how many questions to make</li>
-                <li>Save question sets for later</li>
-            </ul>
-        </section>
-    </main>
+  <main class="qb-main">
+    <nav class="qb-nav-links">
+      <a class="home" href="index.html">← Back to the garden</a>
+      <a class="home" href="daily-review.html">Daily Review</a>
+      <a class="home" href="collection.html">My Collection</a>
+    </nav>
+
+    <header class="qb-header">
+      <div class="qb-leaf">🌱</div>
+      <h1>My Question Garden</h1>
+      <p>Grow your knowledge, one question at a time.</p>
+    </header>
+
+    <section class="qb-panel">
+      <div class="qb-section-heading">
+        <div>
+          <h2>Create a question set</h2>
+          <p>Start with your own questions or let AI help you grow a set.</p>
+        </div>
+      </div>
+
+      <form id="createSetForm" class="qb-create-form">
+        <label>
+          Set title
+          <input id="setTitle" type="text" maxlength="70" placeholder="e.g. Biology - Photosynthesis" required>
+        </label>
+        <label>
+          Subject / category
+          <input id="setSubject" type="text" maxlength="40" placeholder="e.g. Biology">
+        </label>
+        <button class="qb-button primary" type="submit">Create empty set</button>
+      </form>
+
+      <div class="qb-divider"><span>OR GENERATE WITH AI</span></div>
+
+      <label for="studyNotes">Paste your study notes</label>
+      <textarea id="studyNotes" class="qb-notes" placeholder="Paste your class notes, textbook excerpts, or study material here. (At least 80 characters)"></textarea>
+      <div class="qb-generate-row">
+        <label class="qb-count-label" for="questionCount">Questions
+          <select id="questionCount">
+            <option value="4">4 questions</option>
+            <option value="6">6 questions</option>
+            <option value="8" selected>8 questions</option>
+          </select>
+        </label>
+        <button id="generateButton" class="qb-button primary" type="button">✨ Generate & save</button>
+      </div>
+      <p id="qbStatus" class="qb-status" role="status" aria-live="polite">Your saved sets will appear below.</p>
+    </section>
+
+    <section class="qb-panel">
+      <div class="qb-library-heading">
+        <div>
+          <h2>Your saved sets</h2>
+          <p id="setCount">0 study sets</p>
+        </div>
+        <div class="qb-tools">
+          <button id="exportButton" class="qb-button secondary" type="button">Export bank</button>
+          <label class="qb-button secondary qb-import-label" for="importFile">Import bank</label>
+          <input id="importFile" type="file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+
+      <input id="searchSets" class="qb-search" type="search" placeholder="Search by title or subject...">
+      <div id="setsList" class="qb-sets-list"></div>
+      <p id="emptyMessage" class="qb-empty">Your garden is waiting! Create a set or generate questions to get started.</p>
+    </section>
+
+    <section id="editorPanel" class="qb-panel" hidden>
+      <div class="qb-library-heading">
+        <div>
+          <h2 id="editorTitle">Edit question set</h2>
+          <p id="editorSubtitle"></p>
+        </div>
+        <button id="closeEditor" class="qb-button secondary" type="button">Close</button>
+      </div>
+
+      <div class="qb-edit-meta">
+        <label>Set title <input id="editSetTitle" maxlength="70"></label>
+        <label>Subject <input id="editSetSubject" maxlength="40"></label>
+        <button id="saveSetDetails" class="qb-button secondary" type="button">Save details</button>
+      </div>
+
+      <h3>Questions in this set</h3>
+      <div id="questionList" class="qb-question-list"></div>
+
+      <div class="qb-add-question">
+        <h3>Add a question</h3>
+        <label for="newQuestion">Question</label>
+        <textarea id="newQuestion" rows="2" placeholder="Type your question..."></textarea>
+        <label for="newAnswer">Answer</label>
+        <textarea id="newAnswer" rows="2" placeholder="Type the correct answer..."></textarea>
+        <button id="addQuestionButton" class="qb-button primary" type="button">＋ Add question</button>
+      </div>
+      <p class="qb-help">You need at least four questions in a set to play Garden Match.</p>
+    </section>
+  </main>
+
+  <script src="question-bank.js"></script>
 </body>
 </html>

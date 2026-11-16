@@ -3,17 +3,23 @@
   --ink:#dcf5e6;--mute:#93bba3;--leaf:#5cc46a;--leaf-d:#3c9a52;--gold:#f2c14e;--pink:#ff8fb8;
   --acc:#5cc46a;
 }
+
 *{box-sizing:border-box}
+
 html,body{margin:0;max-width:100%;overflow-x:clip}
+
 body{background:var(--bg);color:var(--ink);font-family:"Pixelify Sans",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45;min-height:100vh}
+
 .bg{position:fixed;inset:0;z-index:0;pointer-events:none;image-rendering:pixelated;
   background:radial-gradient(ellipse at 50% 0%,rgba(92,196,106,.18),transparent 60%),
              linear-gradient(rgba(5,18,11,.9),rgba(5,18,11,.95)),
              url("assets/map.png") 0 0/260px}
+
 main{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:18px 16px 56px}
 
 .home{display:inline-block;padding:6px 12px;background:var(--panel);border:3px solid var(--edge);color:var(--ink);text-decoration:none;font-weight:700;box-shadow:3px 3px 0 var(--edge-d)}
 .home:hover{background:var(--leaf);color:#07140d;border-color:var(--leaf)}
+
 h1{margin:18px 0 4px;font-size:clamp(2.1rem,6vw,3.5rem);line-height:1.05;color:#eaffef;text-shadow:3px 3px 0 var(--leaf-d),6px 6px 0 var(--edge-d)}
 .lede{margin:10px 0 22px;color:var(--mute);max-width:60ch}
 h2{margin:0;font-size:1.5rem}

@@ -1,27 +1,56 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>My Collection | QuizGarden</title>
-
-    <link rel="icon" type="image/png" href="assets/planticon.jpg">
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Collection | QuizGarden</title>
+  <link rel="icon" type="image/png" href="assets/planticon.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="collection.css">
 </head>
 <body>
-    <main>
-        <a class="home" href="index.html">← Back to the garden</a>
-        <section class="panel">
-            <h1>My Collection</h1>
-            <p>Every plant you grow ends up here.</p>
-            <p><b>Coming soon. Features:</b></p>
-            <ul>
-                <li>See the plants you've grown from focus sessions and quiz rounds</li>
-                <li>Tap a plant to see info aboutwhen and how you grew it</li>
-            </ul>
-        </section>
-    </main>
+  <div class="collection-bg" aria-hidden="true"></div>
+  <main class="collection-main">
+    <nav class="collection-nav">
+      <a class="home" href="index.html">← Back to the garden</a>
+      <a class="home" href="game.html">Play Garden Match</a>
+      <a class="home" href="questions.html">Question Bank</a>
+      <a class="home" href="daily-review.html">Daily Review</a>
+    </nav>
+
+    <header class="collection-header">
+      <div class="header-plants" aria-hidden="true">🌱 🌷 🌿</div>
+      <h1>My Collection</h1>
+      <p>Every study session helps your garden grow. Keep learning to discover new plants!</p>
+    </header>
+
+    <section class="collection-stats" aria-label="Collection progress">
+      <article class="collection-stat"><span>Questions completed</span><strong id="completedCount">0</strong></article>
+      <article class="collection-stat"><span>Plants collected</span><strong id="plantCount">0</strong></article>
+      <article class="collection-stat"><span>Daily goals reached</span><strong id="goalCount">0</strong></article>
+    </section>
+
+    <section class="goal-panel">
+      <div class="goal-heading">
+        <div><h2>Today's study goal</h2><p>Complete 10 questions today to earn a daily reward plant.</p></div>
+        <strong id="goalStatus">0 / 10</strong>
+      </div>
+      <div class="goal-track" role="progressbar" aria-label="Today's study goal" aria-valuemin="0" aria-valuemax="10" aria-valuenow="0" id="goalProgress"><span id="goalBar"></span></div>
+      <p id="goalMessage" class="goal-message">You can do it, one question at a time!</p>
+    </section>
+
+    <section class="collection-section">
+      <div class="section-heading"><div><h2>Your plants</h2><p>Unlock a new collection plant for every 10 questions completed overall.</p></div><span class="legend"><span class="legend-dot unlocked-dot"></span> Collected <span class="legend-dot locked-dot"></span> Locked</span></div>
+      <div id="plantGrid" class="plant-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="collection-section reward-section">
+      <div class="section-heading"><div><h2>Daily rewards</h2><p>Reach your 10-question goal on a day to earn a special daily plant.</p></div></div>
+      <div id="dailyRewards" class="daily-rewards"></div>
+    </section>
+
+    <p class="collection-note">Your collection is saved in this browser on this device. Your progress starts when tracking is installed and will not include earlier study sessions.</p>
+  </main>
+  <script src="collection.js"></script>
 </body>
 </html>
