@@ -1,6 +1,58 @@
 // ---- Settings ----
 // Paste your Cloudflare Worker URL here (see worker.js). Leave empty to use sample questions only.
 const API_URL = "https://quiz-generator.akiraevanson.workers.dev/";
+const BANK_KEY = "quizGardenQuestionBank";
+const PERFORMANCE_KEY = "quizGardenPerformance";
+
+let generatedPairs = [];
+let currentStudySource = {
+  setId: "",
+  setTitle: "Garden Match",
+  subject: "Uncategorized",
+  source: "Garden Match"
+};
+let currentSessionId = "";
+
+function makeId() {
+  return (crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`);
+}
+
+function localDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function recordQuestionResult(pair, attempts, roundNumber) {
+  const result = {
+    id: makeId(),
+    sessionId: currentSessionId,
+    round: roundNumber,
+    questionId: pair.questionId || "",
+    question: String(pair.q || ""),
+    answer: String(pair.a || ""),
+    attempts,
+    firstTry: attempts === 1,
+    date: localDateKey(),
+    completedAt: new Date().toISOString(),
+    setId: currentStudySource.setId,
+    setTitle: currentStudySource.setTitle,
+    subject: currentStudySource.subject,
+    source: currentStudySource.source
+  };
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(PERFORMANCE_KEY) || "[]");
+    const records = Array.isArray(saved) ? saved : [];
+    records.push(result);
+    // Keep the newest 5,000 completed-question records to limit browser storage use.
+    localStorage.setItem(PERFORMANCE_KEY, JSON.stringify(records.slice(-5000)));
+  } catch (error) {
+    console.error("Could not save study performance:", error);
+    setStatus("Your answer was completed, but its review data could not be saved. Check browser storage.");
+  }
+}
 
 const SAMPLE = [
   {q:"Which pigment captures light energy in plants?",a:"Chlorophyll"},
@@ -30,15 +82,71 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 const setStatus=t=>$("#status").textContent=t;
 const u=n=>`calc(var(--pixel-size) * ${n})`;
 
+// ---- Load a question set selected from the Question Bank ----
+function loadSavedQuestionSet(){
+  const params = new URLSearchParams(window.location.search);
+  const setId = params.get("set");
+  if(!setId) return false;
+
+  try {
+    const bank = JSON.parse(localStorage.getItem(BANK_KEY) || "[]");
+    const selectedSet = bank.find(set => set.id === setId);
+
+    if(!selectedSet){
+      setStatus("That saved question set could not be found. Open your Question Bank and select a set again.");
+      return false;
+    }
+
+    const pairs = (selectedSet.questions || [])
+      .filter(item => item && item.q && item.a)
+      .map(item => ({q: String(item.q), a: String(item.a), questionId: item.id || ""}));
+
+    if(pairs.length < 4){
+      setStatus("This set needs at least four complete questions before you can play it.");
+      return false;
+    }
+
+    $("#notes").value = "";
+    generatedPairs = [];
+    $("#saveSet").hidden = true;
+    currentStudySource = {
+      setId: selectedSet.id,
+      setTitle: selectedSet.title || "Saved question set",
+      subject: selectedSet.subject || "Uncategorized",
+      source: "Question Bank"
+    };
+    setStatus(`Loaded "${selectedSet.title}". Your saved questions are ready!`);
+    startGame(pairs, currentStudySource);
+    return true;
+  } catch(error) {
+    console.error("Could not load the saved question set:", error);
+    setStatus("There was a problem loading your saved questions. Try opening the set again.");
+    return false;
+  }
+}
+
 // ---- Game rounds ----
-function startGame(pairs){pool=shuffle(pairs);used=0;score=0;round=0;newRound()}
+function startGame(pairs, source = currentStudySource) {
+  currentStudySource = {
+    setId: source.setId || "",
+    setTitle: source.setTitle || "Garden Match",
+    subject: source.subject || "Uncategorized",
+    source: source.source || "Garden Match"
+  };
+  currentSessionId = makeId();
+  pool = shuffle(pairs);
+  used = 0;
+  score = 0;
+  round = 0;
+  newRound();
+}
 
 function newRound(){
   document.querySelectorAll(".mpot,.plant,.carry").forEach(e=>e.remove());
   if(used+4>pool.length){pool=shuffle(pool);used=0}
   const pairs=pool.slice(used,used+4);used+=4;round++;
   const slots=shuffle([0,1,2,3]);
-  game={pairs,solved:[],carry:null,carryEl:null,
+  game={pairs,solved:[],carry:null,carryEl:null,attempts:Array(pairs.length).fill(0),
     pots:pairs.map((p,i)=>({i,x:POT_X[i],y:POT_Y})),
     plants:pairs.map((p,i)=>{const s=slots.indexOf(i);return {id:i,a:p.a,x:PLANT_X[s],y:62+(s%2)*26,gone:false}})};
   game.pots.forEach(p=>{const e=document.createElement("div");e.className="mpot";e.style.left=u(p.x);e.style.top=u(p.y);e.innerHTML=`<b>${LET[p.i]}</b>`;map.appendChild(e);p.el=e});
@@ -68,8 +176,10 @@ function checkHits(){
       if(game.solved.includes(pot.i))continue;
       if(Math.hypot(cx-(pot.x+12),cy-(pot.y+14))<16){
         const p=game.carry;game.carry=null;game.carryEl.remove();game.carryEl=null;
+        game.attempts[p.id]++;
         if(p.id===pot.i){
           game.solved.push(pot.i);score++;
+          recordQuestionResult(game.pairs[p.id], game.attempts[p.id], round);
           pot.el.insertAdjacentHTML("beforeend",`<img src="${FLOWER}" alt="">`);
           setStatus("Yes! "+p.a+" fits pot "+LET[pot.i]+".");
           if(game.solved.length===4){setStatus("Round complete! Your garden is blooming.");$("#next").hidden=false}
@@ -110,10 +220,19 @@ const placeCharacter=()=>{
 const step=()=>{placeCharacter();requestAnimationFrame(step)};
 step();
 
-document.addEventListener("keydown",e=>{
-  if(e.target.tagName==="TEXTAREA")return;
-  const dir=keys[e.key];
-  if(dir){e.preventDefault();if(held_directions.indexOf(dir)===-1)held_directions.unshift(dir)}
+document.addEventListener("keydown", e => {
+  // Ignore game controls while typing in inputs or textareas.
+  if (
+    e.target.tagName === "INPUT" ||
+    e.target.tagName === "TEXTAREA" ||
+    e.target.isContentEditable
+  ) return;
+
+  const dir = keys[e.key];
+  if (dir) {
+    e.preventDefault();
+    if (held_directions.indexOf(dir) === -1) held_directions.unshift(dir);
+  }
 });
 document.addEventListener("keyup",e=>{
   const i=held_directions.indexOf(keys[e.key]);
@@ -124,20 +243,95 @@ document.addEventListener("keyup",e=>{
 async function generate(){
   const notes=$("#notes").value.trim();
   if(notes.length<80){setStatus("Add a few more sentences of notes first (at least 80 characters).");return}
-  if(!API_URL){setStatus("No AI connection set up yet, so these are the sample questions.");startGame(SAMPLE);return}
+  if(!API_URL){
+    generatedPairs = [];
+    $("#saveSet").hidden = true;
+    currentStudySource = {setId:"", setTitle:"Sample questions", subject:"Sample", source:"Sample"};
+    setStatus("No AI connection set up yet, so these are the sample questions.");
+    startGame(SAMPLE, currentStudySource);
+    return;
+  }
+  generatedPairs = [];
+  $("#saveSet").hidden = true;
   $("#gen").disabled=true;setStatus("Making your questions...");
   try{
     const r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({notes})});
     const data=await r.json();
     const pairs=(data.pairs||[]).filter(p=>p&&p.q&&p.a);
     if(!r.ok||pairs.length<4)throw new Error("bad response");
-    startGame(pairs.slice(0,8));
+    generatedPairs = pairs.slice(0,8).map(item => ({q:String(item.q), a:String(item.a)}));
+    currentStudySource = {
+      setId: "",
+      setTitle: "AI-generated practice",
+      subject: "Uncategorized",
+      source: "AI-generated"
+    };
+    $("#saveSet").hidden = false;
+    startGame(generatedPairs, currentStudySource);
   }catch(err){setStatus("Couldn't make questions this time. Try again or use the sample notes.")}
   finally{$("#gen").disabled=false}
 }
+
+function saveGeneratedSet() {
+  const title = $("#saveSetTitle").value.trim();
+  const subject = $("#saveSetSubject").value.trim();
+  if (!title) {
+    setStatus("Please enter a name for your question set.");
+    $("#saveSetTitle").focus();
+    return;
+  }
+  if (generatedPairs.length < 4) {
+    setStatus("Generate at least four questions before saving.");
+    return;
+  }
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(BANK_KEY) || "[]");
+    const bank = Array.isArray(saved) ? saved : [];
+    const now = new Date().toISOString();
+    const newSet = {
+      id: makeId(),
+      title,
+      subject,
+      createdAt: now,
+      updatedAt: now,
+      questions: generatedPairs.map(item => ({
+        id: makeId(),
+        q: item.q,
+        a: item.a,
+        flagged: false
+      }))
+    };
+    bank.unshift(newSet);
+    localStorage.setItem(BANK_KEY, JSON.stringify(bank));
+    currentStudySource = {
+      setId: newSet.id,
+      setTitle: newSet.title,
+      subject: newSet.subject || "Uncategorized",
+      source: "Question Bank"
+    };
+    setStatus(`Saved "${title}" to your Question Bank!`);
+    $("#saveSet").hidden = true;
+    $("#saveSetTitle").value = "";
+    $("#saveSetSubject").value = "";
+  } catch (error) {
+    console.error("Could not save generated question set:", error);
+    setStatus("Couldn't save your questions. Check your browser storage.");
+  }
+}
+
 $("#gen").addEventListener("click",generate);
-$("#demo").addEventListener("click",()=>startGame(SAMPLE));
+$("#saveSet").addEventListener("click", saveGeneratedSet);
+$("#demo").addEventListener("click",()=>{
+  generatedPairs = [];
+  $("#saveSet").hidden = true;
+  currentStudySource = {setId:"", setTitle:"Sample questions", subject:"Sample", source:"Sample"};
+  startGame(SAMPLE, currentStudySource);
+});
 $("#next").addEventListener("click",newRound);
+
+// If the Question Bank opened this page with a set ID, load that set.
+loadSavedQuestionSet();
 
 /* BONUS! Dpad functionality for mouse and touch */
 var isPressed = false;

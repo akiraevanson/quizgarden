@@ -4,24 +4,59 @@ const pix=(rows,pal)=>{const h=rows.length,w=rows[0].length;let r="";rows.forEac
   const P={g:"#5cc46a",G:"#2f8f4e",b:"#7a5238",p:"#ff8fb8",y:"#ffd84d",n:"#6b6fd6",w:"#ffffff",l:"#9fa7e4",c:"#434343",k:"#e8465a"};
 
   const S={
- sprout:pix(["..gg.gg.","..gGggG.",".gGG.GGg","..gGGg..","...GG...","...GG...","..bbbb..",".bbbbbb."],P),
- flower:pix(["..pppp..",".ppyypp.",".ppyypp.","..pppp..","...GG...","..GGG...","...GG...","..bbbb.."],P),
- mound:pix(["........","........","........","........","...gg...","..gGGg..","..bbbb..",".bbbbbb."],P),
- leaf:pix(["........","....gg..","..gggGg.",".ggggGgg","gggGGgg.",".gGGgg..","GGgg....","G......."],P),
- notebook:pix([".nnnnnn.","nwwwwwwn","nwllllwn","nwwwwwwn","nwllllwn","nwwwwwwn","nwllwwwn",".nnnnnn."],P),
- pot:pix([
-    ".cccccccc.",
-    "cbbbbbbbbc",
-    "cbbccccbbc",
-    ".cbbbbbbc.",
-    ".cbbbbbbc.",
-    ".cbbbbbbc.",
-    "..cbbbbc..",
-    "..cbbbbc..",
-    "...cccc..."
-], P),
- clock:pix(["..cccc..",".cwwwwc.","cwwwkwwc","cwwwkwwc","cwwkkwwc","cwwwwwwc",".cwwwwc.","..cccc.."],P),
- cloud:pix(["...wwww.....",".wwwwwwwww..","wwwwwwwwwwww","wwwwwwwwwwww",".wwwwwwwwww."],P)};
+    sprout:pix(["..gg.gg.","..gGggG.",".gGG.GGg","..gGGg..","...GG...","...GG...","..bbbb..",".bbbbbb."],P),
+    flower:pix(["..pppp..",".ppyypp.",".ppyypp.","..pppp..","...GG...","..GGG...","...GG...","..bbbb.."],P),
+    mound:pix(["........","........","........","........","...gg...","..gGGg..","..bbbb..",".bbbbbb."],P),
+    leaf:pix([
+      "........",
+      "....gg..",
+      "..gggGg.",
+      ".ggggGgg",
+      "gggGGgg.",
+      ".gGGgg..",
+      "GGgg....",
+      "G......."
+      ],P),
+
+    notebook:pix([
+      ".nnnnnn.",
+      "nwwwwwwn",
+      "nwllllwn",
+      "nwwwwwwn",
+      "nwllllwn",
+      "nwwwwwwn",
+      "nwllllwn",
+      "nwwwwwwn",
+      ".nnnnnn."
+      ],P),
+
+    pot:pix([
+        ".cccccccc.",
+        "cbbbbbbbbc",
+        "cbbccccbbc",
+        ".cbbbbbbc.",
+        ".cbbbbbbc.",
+        ".cbbbbbbc.",
+        "..cbbbbc..",
+        "..cbbbbc..",
+        "...cccc..."
+    ], P),
+
+    calendar: pix([
+    "..G....G..",
+    ".GGGGGGGG.",
+    "GwwwwwwwwG",
+    "GGGGGGGGGG",
+    "GwwwwwwwwG",
+    "GwGGwwGGwG",
+    "GwwwwwwwwG",
+    "GwGGwwGGwG",
+    "GwwwwwwwwG",
+    ".GGGGGGGG."
+    ], P),
+    clock:pix(["..cccc..",".cwwwwc.","cwwwkwwc","cwwwkwwc","cwwkkwwc","cwwwwwwc",".cwwwwc.","..cccc.."],P),
+    cloud:pix(["...wwww.....",".wwwwwwwww..","wwwwwwwwwwww","wwwwwwwwwwww",".wwwwwwwwww."],P)};
+
 document.querySelectorAll("img[data-s]").forEach(i=>i.src=S[i.dataset.s]);
 
 // Title letters pop in one by one
